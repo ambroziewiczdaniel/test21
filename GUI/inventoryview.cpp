@@ -74,7 +74,6 @@ InventoryView::InventoryView(systemWarehouse* system, QWidget *parent) :
 
 InventoryView::~InventoryView()
 {
-    // Obiekty będące dziećmi InventoryView zostaną automatycznie usunięte.
 }
 
 void InventoryView::setProductQuery(const QString &filterText)
@@ -180,7 +179,7 @@ void InventoryView::onGenerateInventoryDocumentClicked()
         productsToGenerate.append(data);
     }
 
-    InventoryDocumentGenerator generator; // Generator operuje na danych, nie potrzebuje db bezpośrednio
+    InventoryDocumentGenerator generator; 
     if (generator.generateDocument(productsToGenerate)) {
         QMessageBox::information(this, "Sukces", "Wygenerowano plik inwentaryzacji:\\n" + QDir::currentPath() + "/INW-" + QDateTime::currentDateTime().toString("hhmmss-yyyyMMdd") + ".txt");
     } else {

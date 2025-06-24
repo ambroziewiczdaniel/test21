@@ -5,11 +5,11 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVector>
-#include <QMessageBox> // Tymczasowo dla komunikatów o błędach
+#include <QMessageBox>
 #include <QDebug>
 
 #include "Order.h"
-#include "OrderItem.h" // OrderDao może potrzebować dostępu do OrderItemDao lub ładować OrderItems
+#include "OrderItem.h"
 
 class OrderDao
 {
@@ -27,7 +27,6 @@ public:
     bool updateOrder(const Order& order); // Aktualizuje zamówienie
     bool deleteOrder(int orderId); // Usuwa zamówienie (i powiązane pozycje, jeśli CASCADE DELETE)
 
-    // Metody do obsługi statusu (można przenieść do OrderService, ale na razie tu)
     bool updateOrderStatus(int orderId, const QString& newStatus);
 };
 

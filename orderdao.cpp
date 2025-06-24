@@ -8,14 +8,13 @@ OrderDao::OrderDao(QSqlDatabase& db)
 int OrderDao::addOrder(const Order& order)
 {
     QSqlQuery query(m_db);
-    // Używamy id_zamowienia jako klucza głównego z autoincrement
     query.prepare("INSERT INTO zamowienia (kontrahent, data, status) VALUES (:kontrahent, :data, :status)");
     query.bindValue(":kontrahent", order.getKontrahent());
     query.bindValue(":data", order.getData().toString("yyyy-MM-dd hh:mm:ss"));
     query.bindValue(":status", order.getStatus());
 
     if (query.exec()) {
-        return query.lastInsertId().toInt(); // Zwraca ID nowo dodanego zamówienia
+        return query.lastInsertId().toInt();
     } else {
         qDebug() << "OrderDao: Blad dodawania zamowienia:" << query.lastError().text();
         QMessageBox::critical(nullptr, "Błąd Bazy Danych", "Nie można dodać zamówienia: " + query.lastError().text());
@@ -109,12 +108,6 @@ bool OrderDao::updateOrder(const Order& order)
 
 bool OrderDao::deleteOrder(int orderId)
 {
-    // UWAGA: Zakładam, że masz CASCADE DELETE w FOREIGN KEY dla order_items
-    // Jeśli nie, musisz najpierw usunąć pozycje zamówienia z order_items.
-    // QSqlQuery deleteItemsQuery(m_db);
-    // deleteItemsQuery.prepare("DELETE FROM order_items WHERE order_id = :orderId");
-    // deleteItemsQuery.bindValue(":orderId", orderId);
-    // if (!deleteItemsQuery.exec()) { ... return false; }
 
     QSqlQuery query(m_db);
     query.prepare("DELETE FROM zamowienia WHERE id_zamowienia = :id_zamowienia");

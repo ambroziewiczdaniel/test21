@@ -6,7 +6,7 @@
 
 PrzyjecieView::PrzyjecieView(systemWarehouse* system, QWidget *parent) :
     QWidget(parent),
-    m_system(system), // Inicjalizujemy wskaźnik do systemu
+    m_system(system),
     searchProductLabel(nullptr),
     productSearchLineEdit(nullptr),
     productCompleter(nullptr),
@@ -39,7 +39,7 @@ PrzyjecieView::PrzyjecieView(systemWarehouse* system, QWidget *parent) :
     mainLayout->addLayout(productSearchLayout);
 
     productCompleterModel = new QSqlQueryModel(this);
-    productCompleterModel->setQuery("SELECT name FROM products", m_system->getDb()); // Używamy m_system->getDb()
+    productCompleterModel->setQuery("SELECT name FROM products", m_system->getDb());
     if (productCompleterModel->lastError().isValid()) {
         QMessageBox::warning(this, "Błąd Bazy Danych",
                              "Nie można załadować nazw produktów do autouzupełniania (Przyjęcie): " + productCompleterModel->lastError().text());
@@ -115,7 +115,7 @@ PrzyjecieView::PrzyjecieView(systemWarehouse* system, QWidget *parent) :
 
 PrzyjecieView::~PrzyjecieView()
 {
-    // Obiekty będące dziećmi PrzyjecieView zostaną automatycznie usunięte.
+
 }
 
 void PrzyjecieView::onSearchTextChanged(const QString &text)
@@ -225,7 +225,7 @@ void PrzyjecieView::onAddProductToReceiptClicked()
     kolumnaSpinBox->setValue(0);
     iloscPrzyjetaSpinBox->setValue(1);
 
-    productCompleterModel->setQuery("SELECT name FROM products", m_system->getDb()); // Używamy m_system->getDb()
+    productCompleterModel->setQuery("SELECT name FROM products", m_system->getDb());
 }
 
 void PrzyjecieView::onGeneratePZClicked()
@@ -238,7 +238,7 @@ void PrzyjecieView::onGeneratePZClicked()
     QList<PZProductData> productsToGenerate;
     bool allUpdatesSuccessful = true;
 
-    if (!m_system->getDb().transaction()) { // Używamy m_system->getDb()
+    if (!m_system->getDb().transaction()) {
         QMessageBox::critical(this, "Błąd Bazy Danych", "Nie można rozpocząć transakcji: " + m_system->getDb().lastError().text());
         qDebug() << "PrzyjecieView: Błąd rozpoczęcia transakcji:" << m_system->getDb().lastError().text();
         return;
@@ -252,7 +252,6 @@ void PrzyjecieView::onGeneratePZClicked()
         int kolumna = receiptItemsModel->item(i, 4)->text().toInt();
         int iloscPrzyjeta = receiptItemsModel->item(i, 5)->text().toInt();
 
-        // Używamy LocationDao do aktualizacji ilości w lokalizacji
         if (!m_system->getLocationDao()->updateProductLocationQuantity(productId, regal, polka, kolumna,
                                                                        m_system->getLocationDao()->getProductQuantityInLocation(productId, regal, polka, kolumna) + iloscPrzyjeta))
         {
@@ -273,9 +272,7 @@ void PrzyjecieView::onGeneratePZClicked()
 
     if (allUpdatesSuccessful) {
         m_system->getDb().commit(); // Używamy m_system->getDb()
-
-        // PZDocumentGenerator może przyjmować systemWarehouse* zamiast QSqlDatabase&
-        PZDocumentGenerator generator(m_system->getDb()); // Przekazujemy m_system->getDb() dla generatora
+        PZDocumentGenerator generator(m_system->getDb());
         if (generator.generateDocument(productsToGenerate)) {
             QMessageBox::information(this, "Sukces", "Zaktualizowano stany magazynowe i wygenerowano plik PZ.");
             receiptItemsModel->clear();
@@ -290,7 +287,7 @@ void PrzyjecieView::onGeneratePZClicked()
             QMessageBox::critical(this, "Błąd Generowania", "Błąd podczas generowania pliku PZ lub rejestracji w bazie danych. Zmiany w magazynie mogły zostać zapisane.");
         }
     } else {
-        m_system->getDb().rollback(); // Używamy m_system->getDb()
+        m_system->getDb().rollback();
         QMessageBox::critical(this, "Błąd Transakcji", "Błąd podczas aktualizacji stanów magazynowych. Operacja przyjęcia została przerwana.");
     }
 }

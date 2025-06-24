@@ -146,22 +146,25 @@ void AdminView::onAddUserButtonClicked()
         return;
     }
 
-    // TODO: Tutaj powinna być integracja z UserDAO/UserService
-    QSqlQuery query(m_system->getDb()); // Zmieniono z m_system->db
-    query.prepare("INSERT INTO users (login, password, role) VALUES (:login, :password, :role)");
-    query.bindValue(":login", login);
-    query.bindValue(":password", password);
-    query.bindValue(":role", role);
+    // Sprawdzamy, czy użytkownik o danym loginie już istnieje
+    if (m_system->getUserDao()->userExists(login)) {
+        QMessageBox::warning(this, "Błąd", "Użytkownik o loginie '" + login + "' już istnieje.");
+        return;
+    }
 
-    if (query.exec()) {
+    // Tworzymy obiekt User
+    User newUser(-1, login, password, role); // ID -1, bo baza nada swoje (AUTOINCREMENT)
+
+    // Używamy UserDao do dodania użytkownika
+    if (m_system->getUserDao()->addUser(newUser)) {
         QMessageBox::information(this, "Sukces", "Użytkownik '" + login + "' (" + role + ") został dodany.");
         userLoginLineEdit->clear();
         userPasswordLineEdit->clear();
         userRoleComboBox->setCurrentIndex(0);
-        emit databaseUpdated();
+        emit databaseUpdated(); // Powiadom o zmianie danych
     } else {
-        QMessageBox::critical(this, "Błąd Bazy Danych", "Nie można dodać użytkownika: " + query.lastError().text());
-        qDebug() << "Błąd dodawania użytkownika:" << query.lastError().text();
+        // Komunikat o błędzie już wyświetla UserDao
+        qDebug() << "AdminView: Nie mozna dodac uzytkownika przez UserDao.";
     }
 }
 

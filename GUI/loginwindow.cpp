@@ -1,5 +1,5 @@
 #include "loginwindow.h"
-#include "mainwindow.h"
+#include "mainwindow.h" // Potrzebne, aby po zalogowaniu otworzyć MainWindow
 #include <QDebug>
 
 LoginWindow::LoginWindow(systemWarehouse* system, QWidget *parent) :
@@ -8,7 +8,7 @@ LoginWindow::LoginWindow(systemWarehouse* system, QWidget *parent) :
     passwordLineEdit(nullptr),
     statusLabel(nullptr),
     loginButton(nullptr),
-    System(system)
+    System(system) // Używamy 'System' w tej klasie, to zgodne z Twoją konwencją
 {
     setWindowTitle("Logowanie do Systemu Magazynowego");
     setFixedSize(400, 200);
@@ -55,12 +55,13 @@ void LoginWindow::onLoginButtonClicked()
     QString login = loginLineEdit->text();
     QString password = passwordLineEdit->text();
 
+    // Wywołujemy authorize_logIn w systemWarehouse, które teraz użyje UserDao
     QString userRole = System->authorize_logIn(login.toStdString(), password.toStdString());
 
-    if (!userRole.isEmpty() && System->Current_User) {
+    if (!userRole.isEmpty()) { // Jeśli rola nie jest pusta, autoryzacja się powiodła
         statusLabel->setText("Zalogowano poprawnie jako " + userRole + "!");
         QMessageBox::information(this, "Logowanie", "Zalogowano poprawnie!");
-        accept();
+        accept(); // Zamyka okno logowania z wynikiem QDialog::Accepted
     } else {
         statusLabel->setText("Niepoprawny login lub hasło!");
         QMessageBox::warning(this, "Logowanie", "Niepoprawny login lub hasło!");

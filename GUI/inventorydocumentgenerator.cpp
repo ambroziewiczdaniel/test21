@@ -1,4 +1,4 @@
-// inventorydocumentgenerator.cpp
+
 #include "inventorydocumentgenerator.h"
 
 InventoryDocumentGenerator::InventoryDocumentGenerator(QObject *parent) : QObject(parent)
@@ -8,7 +8,6 @@ InventoryDocumentGenerator::InventoryDocumentGenerator(QObject *parent) : QObjec
 bool InventoryDocumentGenerator::generateDocument(const QList<InventoryProductData>& productsData)
 {
     if (productsData.isEmpty()) {
-        // Ta walidacja jest też w InventoryView, ale dobrze mieć ją tu na wszelki wypadek
         return false;
     }
 
@@ -39,8 +38,6 @@ bool InventoryDocumentGenerator::generateDocument(const QList<InventoryProductDa
         file.close();
         return true;
     } else {
-        // Komunikat o błędzie zapisywania może być wyświetlony przez klasę wywołującą (InventoryView),
-        // ale można go też tu zalogować lub zwrócić bardziej szczegółowy błąd.
         qDebug() << "Błąd zapisu pliku inwentaryzacji: " << file.errorString();
         return false;
     }

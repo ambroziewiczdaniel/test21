@@ -1,12 +1,8 @@
 QT       += core gui sql widgets
 
-# Jeśli używasz Qt 6 lub nowszego, dodaj też modules:
-# QT += core gui sql widgets
-
 TARGET = magazyn
 CONFIG   += console c++17
 
-# Lista wszystkich plików .cpp
 SOURCES += \
     GUI/adminview.cpp \
     GUI/dispatchquantitydelegate.cpp \
@@ -34,11 +30,12 @@ SOURCES += \
     UserClass.cpp \
     UserAdmin.cpp \
     UserAccountant.cpp \
-    UserWarehouseKeeper.cpp
+    UserWarehouseKeeper.cpp \
+    user.cpp \
+    userdao.cpp
 
 # Lista wszystkich plików .h
 HEADERS += \
-    .h \
     GUI/adminview.h \
     GUI/dispatchquantitydelegate.h \
     IStockTaking.h \
@@ -67,4 +64,6 @@ HEADERS += \
     UserClass.h \
     UserAdmin.h \
     UserAccountant.h \
-    UserWarehouseKeeper.h
+    UserWarehouseKeeper.h \
+    user.h \
+    userdao.h

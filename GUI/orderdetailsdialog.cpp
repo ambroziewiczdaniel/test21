@@ -1,12 +1,12 @@
 #include "orderdetailsdialog.h"
-#include "dispatchorderdialog.h" // Nadal potrzebne
+#include "dispatchorderdialog.h"
 #include <QDebug>
 #include <QVariant>
 #include <QHeaderView>
 
 OrderDetailsDialog::OrderDetailsDialog(systemWarehouse* system, int orderId, QWidget *parent) :
     QDialog(parent),
-    m_system(system), // Inicjalizujemy wskaźnik do systemu
+    m_system(system),
     m_orderId(orderId)
 {
     setWindowTitle("Szczegóły Zamówienia ID: " + QString::number(m_orderId));
@@ -16,7 +16,6 @@ OrderDetailsDialog::OrderDetailsDialog(systemWarehouse* system, int orderId, QWi
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    // --- Sekcja ogólnych informacji o zamówieniu ---
     QHBoxLayout *infoLayout = new QHBoxLayout();
     kontrahentLabel = new QLabel("Kontrahent: ", this);
     dataLabel = new QLabel("Data: ", this);
@@ -27,7 +26,6 @@ OrderDetailsDialog::OrderDetailsDialog(systemWarehouse* system, int orderId, QWi
     infoLayout->addWidget(statusLabel);
     mainLayout->addLayout(infoLayout);
 
-    // --- Sekcja zmiany statusu ---
     QHBoxLayout *statusControlLayout = new QHBoxLayout();
     QLabel *changeStatusLabel = new QLabel("Zmień status na:", this);
     statusComboBox = new QComboBox(this);
@@ -45,7 +43,6 @@ OrderDetailsDialog::OrderDetailsDialog(systemWarehouse* system, int orderId, QWi
     statusControlLayout->addStretch();
     mainLayout->addLayout(statusControlLayout);
 
-    // --- Sekcja produktów w zamówieniu ---
     mainLayout->addWidget(new QLabel("Produkty w zamówieniu:", this));
     productsModel = new QSqlQueryModel(this);
     productsTableView = new QTableView(this);
@@ -57,19 +54,17 @@ OrderDetailsDialog::OrderDetailsDialog(systemWarehouse* system, int orderId, QWi
     productsTableView->verticalHeader()->setVisible(false);
     mainLayout->addWidget(productsTableView);
 
-    // Załaduj dane po skonfigurowaniu UI
     loadOrderDetails();
     loadOrderProducts();
 }
 
 OrderDetailsDialog::~OrderDetailsDialog()
 {
-    // Obiekty są dziećmi QDialog, więc zostaną automatycznie usunięte.
+
 }
 
 void OrderDetailsDialog::loadOrderDetails()
 {
-    // Używamy OrderDao do pobrania szczegółów zamówienia
     Order* order = m_system->getOrderDao()->getOrderById(m_orderId);
 
     if (order) {
@@ -92,7 +87,7 @@ void OrderDetailsDialog::loadOrderDetails()
 
 void OrderDetailsDialog::loadOrderProducts()
 {
-    QSqlQuery query(m_system->getDb()); // Używamy m_system->getDb()
+    QSqlQuery query(m_system->getDb());
     query.prepare(
         "SELECT "
         "p.id, "

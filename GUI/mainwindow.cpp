@@ -6,7 +6,7 @@
 
 MainWindow::MainWindow(systemWarehouse* system, QWidget *parent) :
     QMainWindow(parent),
-    m_system(system), // <-- TUTAJ INICJALIZACJA JEST TERAZ POPRAWNA
+    m_system(system), //
     warehouseButton(nullptr),
     zamowieniaButton(nullptr),
     receiptButton(nullptr),
@@ -20,7 +20,7 @@ MainWindow::MainWindow(systemWarehouse* system, QWidget *parent) :
     ksiegowoscView(nullptr),
     emptyPlaceholderView(nullptr)
 {
-    if (m_system && m_system->Current_User) { // <-- TUTAJ UŻYWAMY TERAZ m_system
+    if (m_system && m_system->Current_User) {
         m_userRole = m_system->Current_User->get_user_type();
     } else {
         m_userRole = "Nieznana";
@@ -72,7 +72,7 @@ MainWindow::MainWindow(systemWarehouse* system, QWidget *parent) :
 
     stackedWidget = new QStackedWidget(this);
 
-    if (!m_system->Database_isOpen()) { // <-- TUTAJ UŻYWAMY TERAZ m_system
+    if (!m_system->Database_isOpen()) {
         QMessageBox::critical(this, "Błąd Bazy Danych",
                               "Baza danych nie jest otwarta w systemWarehouse. "
                               "Upewnij się, że systemWarehouse poprawnie otwiera bazę danych.");
@@ -90,9 +90,9 @@ MainWindow::MainWindow(systemWarehouse* system, QWidget *parent) :
     zamowieniaView = new ZamowieniaView(m_system, this);
     przyjecieView = new PrzyjecieView(m_system, this);
     inventoryView = new InventoryView(m_system, this);
-    adminView = new AdminView(m_system, this); // <-- TUTAJ JEST JUŻ POPRAWNIE
+    adminView = new AdminView(m_system, this);
     ksiegowoscView = new KsiegowoscView(m_system, this);
-    emptyPlaceholderView = createPlaceholderView("To jest pusta zakładka. Możesz ją później wykorzystać.");
+    emptyPlaceholderView = createPlaceholderView("DEBUG: pusta zakładka.");
 
     stackedWidget->addWidget(warehouseView);
     stackedWidget->addWidget(zamowieniaView);
@@ -128,7 +128,7 @@ QWidget* MainWindow::createPlaceholderView(const QString& text) {
     Q_UNUSED(text);
     QWidget* placeholder = new QWidget(this);
     QVBoxLayout* layout = new QVBoxLayout(placeholder);
-    QLabel* label = new QLabel("To jest pusta zakładka. Możesz ją później wykorzystać.", placeholder);
+    QLabel* label = new QLabel("DEBUG: pusta zakladka", placeholder);
     label->setAlignment(Qt::AlignCenter);
     layout->addWidget(label);
     placeholder->setLayout(layout);
@@ -166,7 +166,7 @@ void MainWindow::onUserRoleOptionClicked()
 
 void MainWindow::onGenerateDocumentButtonClicked()
 {
-    if (m_system->Database_isOpen()) { // <-- TUTAJ UŻYWAMY TERAZ m_system
+    if (m_system->Database_isOpen()) {
         DocumentGeneratorDialog dialog(m_system, this);
         dialog.exec();
     } else {
@@ -213,11 +213,9 @@ void MainWindow::handleKsiegowoscAction() {
 void MainWindow::refreshDataViews()
 {
     qDebug() << "Odświeżam wszystkie widoki danych...";
-    // Poniżej używamy refreshData(), które powinny być publicznymi slotami w widokach.
-    // Jeśli ich nie ma, dodaj je lub użyj innej publicznej metody odświeżającej.
     warehouseView->refreshData();
     inventoryView->refreshData();
     zamowieniaView->refreshData();
-    if (adminView) adminView->refreshData(); // Zmieniono na refreshData() - musisz ją dodać w AdminView.h/cpp
-    if (ksiegowoscView) ksiegowoscView->refreshData(); // Zmieniono na refreshData() - musisz ją dodać w KsiegowoscView.h/cpp
+    if (adminView) adminView->refreshData(); 
+    if (ksiegowoscView) ksiegowoscView->refreshData(); 
 }

@@ -1,17 +1,9 @@
-// GUI/dispatchorderdialog.cpp
-#include "dispatchorderdialog.h" // Must be first
+#include "dispatchorderdialog.h"
 #include <QDebug>
 #include <QHeaderView>
-// No longer needed: #include <QStyledItemDelegate> as it's in dispatchquantitydelegate.h
-// No longer needed: #include <QItemDelegate> as it's in dispatchquantitydelegate.h
-// No longer needed: #include <QSpinBox> as it's in dispatchquantitydelegate.h
 
-#include "../LocationDao.h" // Still needed for WarehouseProductData
+#include "../LocationDao.h"
 
-// Removed: The entire definition and implementation of DispatchQuantityDelegate
-// as it's now in dispatchquantitydelegate.h and dispatchquantitydelegate.cpp
-
-// Implementation of DispatchOrderDialog class
 DispatchOrderDialog::DispatchOrderDialog(systemWarehouse* system, int orderId, QWidget *parent) :
     QDialog(parent),
     m_system(system),

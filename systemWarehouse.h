@@ -20,6 +20,8 @@
 #include "OrderItem.h"
 #include "OrderDao.h"
 #include "OrderItemDao.h"
+#include "User.h" // NOWY INCLUDE
+#include "UserDao.h"
 
 // Musisz mieć te pliki, nawet jeśli są puste
 // #include "userWarehouseKeeper.h"
@@ -47,7 +49,7 @@ public:
     void closeDatabase() { if(db.isOpen()) db.close(); };
     bool openDatabase() ;
     bool Database_isOpen() { return db.isOpen(); }
-
+    UserDao* getUserDao() const { return m_userDao; }
     // Dostęp do DAO
     ProductDao* getProductDao() const { return m_productDao; }
     LocationDao* getLocationDao() const { return m_locationDao; }
@@ -63,4 +65,5 @@ private:
     LocationDao* m_locationDao;
     OrderDao* m_orderDao;
     OrderItemDao* m_orderItemDao;
+    UserDao* m_userDao;
 };

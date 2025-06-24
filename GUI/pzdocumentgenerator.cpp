@@ -1,12 +1,12 @@
 // pzdocumentgenerator.cpp
 #include "pzdocumentgenerator.h"
 #include <QDebug>
-#include <QSqlDatabase> // Upewnij się, że ten nagłówek jest dołączony, jeśli go nie było
+#include <QSqlDatabase>
 
 // Poprawiona definicja konstruktora
 PZDocumentGenerator::PZDocumentGenerator(QSqlDatabase &db, QObject *parent) :
     QObject(parent),
-    m_db(db) // Inicjalizacja referencji do bazy danych
+    m_db(db)
 {
 }
 

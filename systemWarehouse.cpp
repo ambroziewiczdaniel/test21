@@ -18,6 +18,7 @@ systemWarehouse::systemWarehouse()
     m_locationDao = new LocationDao(db);
     m_orderDao = new OrderDao(db);
     m_orderItemDao = new OrderItemDao(db);
+    m_userDao = new UserDao(db);
 
     loadProducts();
 }
@@ -29,6 +30,7 @@ systemWarehouse::~systemWarehouse()
     delete m_locationDao;
     delete m_orderDao;
     delete m_orderItemDao;
+    delete m_userDao;
 }
 
 void systemWarehouse::loadProducts()
@@ -44,23 +46,15 @@ void systemWarehouse::loadProducts()
 
 QString systemWarehouse::authorize_logIn(std::string username, std::string password)
 {
-    QString result;
-    QSqlQuery query(db);
-    query.prepare("SELECT role FROM users WHERE login = :login AND password = :password");
-    query.bindValue(":login", QString::fromStdString(username));
-    query.bindValue(":password", QString::fromStdString(password));
+    // Używamy UserDao do autoryzacji
+    QString role = m_userDao->authenticateUser(QString::fromStdString(username), QString::fromStdString(password));
 
-    if (query.exec()) {
-        if (query.next()) {
-            result = query.value("role").toString();
-            Current_User = new UserClass(result);
-        }
+    if (!role.isEmpty()) {
+        Current_User = new UserClass(role); // UserClass powinien być inicjalizowany rolą
+        return role;
     } else {
-        qDebug() << "Błąd zapytania logowania:" << query.lastError().text();
-        return "";
+        return ""; // Nieudana autoryzacja
     }
-
-    return result;
 }
 
 QSqlQuery systemWarehouse::getWarehouseProductQuery(const QString& filterText)

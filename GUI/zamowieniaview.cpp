@@ -3,7 +3,7 @@
 
 ZamowieniaView::ZamowieniaView(systemWarehouse* system, QWidget *parent) :
     QWidget(parent),
-    m_system(system), // Inicjalizujemy wskaźnik do systemu
+    m_system(system),
     model(nullptr),
     tableView(nullptr),
     searchLabel(nullptr),
@@ -33,12 +33,12 @@ ZamowieniaView::ZamowieniaView(systemWarehouse* system, QWidget *parent) :
     connect(tableView->selectionModel(), &QItemSelectionModel::currentRowChanged,
             this, &ZamowieniaView::onRowClicked);
 
-    setOrderQuery(""); // Załaduj dane początkowe
+    setOrderQuery("");
 }
 
 ZamowieniaView::~ZamowieniaView()
 {
-    // model i tableView są dziećmi ZamowieniaView, więc zostaną automatycznie usunięte.
+   
 }
 
 void ZamowieniaView::setOrderQuery(const QString &filterText)
@@ -46,7 +46,7 @@ void ZamowieniaView::setOrderQuery(const QString &filterText)
     // Pobieramy QSqlQuery z systemWarehouse, które korzysta z OrderDao
     QSqlQuery query = m_system->getOrdersQuery(filterText);
 
-    if (!query.exec()) { // Wykonaj zapytanie i obsłuż błędy tutaj
+    if (!query.exec()) { 
         QMessageBox::critical(this, "Błąd Zapytania SQL (Zamówienia)",
                               "Błąd podczas ładowania danych: " + query.lastError().text() + "\nZapytanie: " + query.executedQuery());
         qDebug() << "ZamowieniaView: Błąd Zapytania SQL:" << query.lastError().text();
@@ -62,7 +62,6 @@ void ZamowieniaView::setOrderQuery(const QString &filterText)
         qDebug() << "ZamowieniaView: Błąd Modelu SQL:" << model->lastError().text();
     }
 
-    // Ustawienie nagłówków (pamiętając o id_zamowienia)
     model->setHeaderData(0, Qt::Horizontal, "ID Zamówienia");
     model->setHeaderData(1, Qt::Horizontal, "Kontrahent");
     model->setHeaderData(2, Qt::Horizontal, "Data");
@@ -88,9 +87,8 @@ void ZamowieniaView::onRowClicked(const QModelIndex &index)
     qDebug() << "Wybrano zamówienie o ID:" << orderId;
 
     if (orderId > 0) {
-        // OrderDetailsDialog nadal używa QSqlDatabase&. To będzie kolejny cel refaktoryzacji.
-        // Na razie przekazujemy m_system.
-        OrderDetailsDialog dialog(m_system, orderId, this); // Przekazujemy m_system
+
+        OrderDetailsDialog dialog(m_system, orderId, this);
         connect(&dialog, &OrderDetailsDialog::orderStatusChanged, this, &ZamowieniaView::onOrderStatusChanged);
         dialog.exec();
     }

@@ -1,17 +1,17 @@
 #include "warehouseview.h"
 #include <QDebug>
-#include <QFile> // Te include były w Twoim kodzie, więc je zachowuję.
+#include <QFile>
 #include <QTextStream>
 #include <QDateTime>
 #include <QPushButton>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QHBoxLayout>
-#include <QMessageBox> // Dla QMessageBox::critical
+#include <QMessageBox>
 
 WarehouseView::WarehouseView(systemWarehouse* system, QWidget *parent) :
     QWidget(parent),
-    m_system(system), // <-- Upewnij się, że to pasuje do deklaracji w .h
+    m_system(system),
     model(nullptr),
     tableView(nullptr),
     searchLabel(nullptr),
@@ -26,7 +26,7 @@ WarehouseView::WarehouseView(systemWarehouse* system, QWidget *parent) :
     layout->addWidget(searchLabel);
     layout->addWidget(searchLineEdit);
 
-    model = new QSqlQueryModel(this); // Upewnij się, że tu tworzysz QSqlQueryModel
+    model = new QSqlQueryModel(this);
     tableView = new QTableView(this);
     tableView->setModel(model);
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -41,17 +41,17 @@ WarehouseView::WarehouseView(systemWarehouse* system, QWidget *parent) :
 
     connect(searchLineEdit, &QLineEdit::textChanged, this, &WarehouseView::onSearchTextChanged);
 
-    setProductQuery(""); // Załaduj dane początkowe
+    setProductQuery("");
 }
 
 WarehouseView::~WarehouseView()
 {
-    // Obiekty będące dziećmi WarehouseView zostaną automatycznie usunięte.
+
 }
 
 void WarehouseView::setProductQuery(const QString &filterText)
 {
-    QSqlQuery query = m_system->getWarehouseProductQuery(filterText); // <-- Użyj m_system
+    QSqlQuery query = m_system->getWarehouseProductQuery(filterText);
 
     if (!query.exec()) { // Wykonaj zapytanie i sprawdź błędy tutaj, w widoku.
         QMessageBox::critical(this, "Błąd Zapytania SQL (Magazyn)",
@@ -61,15 +61,14 @@ void WarehouseView::setProductQuery(const QString &filterText)
         return;
     }
 
-    model->setQuery(std::move(query)); // Model jest teraz QSqlQueryModel*, więc ma setQuery
+    model->setQuery(std::move(query)); 
 
-    if (model->lastError().isValid()) { // Model jest teraz QSqlQueryModel*, więc ma lastError
+    if (model->lastError().isValid()) {
         QMessageBox::critical(this, "Błąd Modelu SQL (Magazyn)",
                               "Błąd po ustawieniu zapytania w modelu: " + model->lastError().text());
         qDebug() << "WarehouseView: Błąd Modelu SQL:" << model->lastError().text();
     }
 
-    // Ustawienie nagłówków
     model->setHeaderData(0, Qt::Horizontal, "ID Produktu");
     model->setHeaderData(1, Qt::Horizontal, "Nazwa Produktu");
     model->setHeaderData(2, Qt::Horizontal, QString::fromUtf8("Minimalna dopuszczalna ilosc"));
